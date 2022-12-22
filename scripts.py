@@ -8,8 +8,11 @@ COMMENDATION_TEXT = ('Молодец!', 'Хвалю!', 'Отлично!', 'Пр�
 
 
 def get_schoolkid(name):
-    schoolkid = Schoolkid.objects.get(full_name__contains=name)
-    return schoolkid
+    try:
+        schoolkid = Schoolkid.objects.get(full_name__contains=name)
+        return schoolkid
+    except MultipleObjectsReturned:
+        print('Найдено несколько учеников, введите точное ФИО')
 
 
 def fix_marks(kid_name):
