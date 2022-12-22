@@ -13,38 +13,43 @@ def get_schoolkid(name):
         return schoolkid
     except MultipleObjectsReturned:
         print('Найдено несколько учеников, введите точное ФИО')
+    except DoesNotExist:
+        print('Ученик не найден, введите верное имя')
 
 
 def fix_marks(kid_name):
     schoolkid = get_schoolkid(kid_name)
-    schoolkid_bad_grades = Mark.objects.filter(
-            schoolkid=schoolkid,
-            points__in=[2, 3]
-    )
-    for grade in schoolkid_bad_grades:
-        grade.points = 5
-        grade.save()
+    if schoolkid:
+        schoolkid_bad_grades = Mark.objects.filter(
+                schoolkid=schoolkid,
+                points__in=[2, 3]
+        )
+        for grade in schoolkid_bad_grades:
+            grade.points = 5
+            grade.save()
 
 
 def remove_chastisements(kid_name):
     schoolkid = get_schoolkid(kid_name)
-    schoolkid_chastiments = Chastisement.objects.filter(schoolkid=schoolkid)
-    schoolkid_chastiments.delete()
+    if schoolkid:
+        schoolkid_chastiments = Chastisement.objects.filter(schoolkid=schoolkid)
+        schoolkid_chastiments.delete()
 
 
 def create_commendation(kid_name, subject_title):
     schoolkid = get_schoolkid(kid_name)
-    lesson = Lesson.objects.filter(
-            year_of_study=schoolkid.year_of_study,
-            group_letter=schoolkid.group_letter,
-            subject__title=subject_title
-    ).order_by('date').first()
-    Commendation.objects.create(
-            text=random.choice(COMMENDATION_TEXT),
-            created=lesson.date, schoolkid=schoolkid,
-            subject=lesson.subject,
-            teacher=lesson.teacher
-    )
+    if schoolkid:
+        lesson = Lesson.objects.filter(
+                year_of_study=schoolkid.year_of_study,
+                group_letter=schoolkid.group_letter,
+                subject__title=subject_title
+        ).order_by('date').first()
+        Commendation.objects.create(
+                text=random.choice(COMMENDATION_TEXT),
+                created=lesson.date, schoolkid=schoolkid,
+                subject=lesson.subject,
+                teacher=lesson.teacher
+        )
 
 
 def main():
