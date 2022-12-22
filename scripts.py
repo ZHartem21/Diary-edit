@@ -20,19 +20,18 @@ def get_schoolkid(name):
 def fix_marks(kid_name):
     schoolkid = get_schoolkid(kid_name)
     if schoolkid:
-        schoolkid_bad_grades = Mark.objects.filter(
+        Mark.objects.filter(
                 schoolkid=schoolkid,
                 points__in=[2, 3]
-        )
-        for grade in schoolkid_bad_grades:
-            grade.points = 5
-            grade.save()
+        ).update(points=5)
 
 
 def remove_chastisements(kid_name):
     schoolkid = get_schoolkid(kid_name)
     if schoolkid:
-        schoolkid_chastiments = Chastisement.objects.filter(schoolkid=schoolkid)
+        schoolkid_chastiments = Chastisement.objects.filter(
+                schoolkid=schoolkid
+        )
         schoolkid_chastiments.delete()
 
 
