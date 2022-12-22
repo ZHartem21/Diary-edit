@@ -7,8 +7,13 @@ from datacenter.models import (Chastisement, Commendation, Lesson, Mark,
 COMMENDATION_TEXT = ('Молодец!', 'Хвалю!', 'Отлично!', 'Прекрасно!', 'Хорошо!')
 
 
+def get_schoolkid(name):
+    schoolkid = Schoolkid.objects.get(full_name__contains=name)
+    return schoolkid
+
+
 def fix_marks(kid_name):
-    schoolkid = Schoolkid.objects.get(full_name__contains=kid_name)
+    schoolkid = get_schoolkid(kid_name)
     schoolkid_bad_grades = Mark.objects.filter(
             schoolkid=schoolkid,
             points__in=[2, 3]
@@ -19,13 +24,13 @@ def fix_marks(kid_name):
 
 
 def remove_chastisements(kid_name):
-    schoolkid = Schoolkid.objects.get(full_name__contains=kid_name)
+    schoolkid = get_schoolkid(kid_name)
     schoolkid_chastiments = Chastisement.objects.filter(schoolkid=schoolkid)
     schoolkid_chastiments.delete()
 
 
 def create_commendation(kid_name, subject_title):
-    schoolkid = Schoolkid.objects.get(full_name__contains=kid_name)
+    schoolkid = get_schoolkid(kid_name)
     lesson = Lesson.objects.filter(
             year_of_study=schoolkid.year_of_study,
             group_letter=schoolkid.group_letter,
